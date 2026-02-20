@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat with {{ other_user.username }} - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0">Chat with {{ other_user.get_full_name|default:other_user.username }}</h4>
+            </div>
+            <a href="{% url 'inbox' %}" class="btn btn-sm btn-light text-primary">Back to Inbox</a>
+        </div>
+        <div class="card-body" style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
+            <div class="d-flex flex-column">
+                {% for message in chat_messages %}
+                <div
+                    class="mb-2 d-flex {% if message.sender == request.user %}justify-content-end{% else %}justify-content-start{% endif %}">
+                    <div class="card {% if message.sender == request.user %}bg-primary text-white{% else %}bg-white{% endif %} shadow-sm"
+                        style="max-width: 75%;">
+                        <div class="card-body py-2 px-3">
+                            <p class="mb-0">{{ message.content }}</p>
+                            <small
+                                class="{% if message.sender == request.user %}text-white-50{% else %}text-muted{% endif %} d-block text-end"
+                                style="font-size: 0.7rem;">
+                                {{ message.timestamp|date:"M d, P" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted">No messages yet. Start the conversation!</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="card-footer bg-white">
+            <form method="post" class="d-flex">
+                {% csrf_token %}
+                <input type="text" name="content" class="form-control me-2" placeholder="Type a message..." required
+                    autocomplete="off">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    // Scroll to bottom of chat
+    const chatBody = document.querySelector('.card-body');
+    chatBody.scrollTop = chatBody.scrollHeight;
+</script>
+{% endblock %}

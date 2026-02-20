@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book {{ service.title }} - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Book Service</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-3">{{ service.title }}</h4>
+                    <p class="text-muted">Provider: {{ service.provider.get_full_name|default:service.provider.username }}</p>
+                    <p class="fw-bold">Price: ${{ service.price }}</p>
+                    <hr>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_date" class="form-label">Date</label>
+                                {{ form.date }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="id_time" class="form-label">Time</label>
+                                {{ form.time }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_notes" class="form-label">Notes (Optional)</label>
+                            {{ form.notes }}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Confirm Booking</button>
+                            <a href="{% url 'service_detail' service.pk %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

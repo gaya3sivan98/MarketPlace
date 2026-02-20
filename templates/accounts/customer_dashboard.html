@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer Dashboard - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">My Dashboard</h2>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Active Bookings</h5>
+                    <p class="card-text display-4">{{ active_bookings }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Completed Jobs</h5>
+                    <p class="card-text display-4">{{ completed_bookings }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Spend</h5>
+                    <p class="card-text display-4">${{ total_spend }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-4">My Dashboard Actions</h3>
+    <div class="row">
+        <div class="col-md-3">
+            <a href="{% url 'customer_bookings' %}" class="btn btn-primary btn-lg w-100">My Bookings</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'service_list' %}" class="btn btn-success btn-lg w-100">Book Service</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'inbox' %}" class="btn btn-warning btn-lg w-100 text-white">Messages</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'profile' %}" class="btn btn-info btn-lg w-100 text-white">Edit Profile</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="text-white text-center py-5" style="background: linear-gradient(#04010a, #0c54db, #04010a);">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Find Local Services Easily</h1>
+        <p class="lead mb-4">Hire trusted professionals for all your home service needs.</p>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form class="d-flex" action="{% url 'service_list' %}" method="get">
+                    <input class="form-control form-control-lg me-2" type="search" placeholder="Search for services..."
+                        aria-label="Search" name="q">
+                    <button class="btn btn-light btn-lg" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-5 categories-section">
+    <div class="container">
+        <h2 class="text-center text-dark mb-4 ">Popular Categories</h2>
+        <div class="row g-4">
+            {% for category in categories %}
+            <div class="col-6 col-md-4 col-lg-2">
+                <a href="{% url 'service_list' %}?category={{ category.slug }}" class="text-decoration-none text-dark">
+                    <div class="card text-center h-100 shadow-sm hover-shadow">
+                        <div class="card-body">
+                            {% if category.image %}
+                            <img src="{{ category.image.url }}" class="img-fluid mb-2" style="max-height: 50px;">
+                            {% else %}
+                            <i class="{{ category.icon|default:'bi bi-grid' }} fs-1 text-primary"></i>
+                            {% endif %}
+                            <h5 class="card-title mt-2 fs-6">{{ category.name }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No categories available yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Services Section -->
+<section class="py-5 bg-light ">
+    <div class="container">
+        <h2 class="text-center text-dark mb-4">Featured Services</h2>
+        <div class="row g-4">
+            {% for service in featured_services %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-secondary">{{ service.category.name }}</span>
+                            <small class="text-muted">By {{ service.provider.username }}</small>
+                        </div>
+                        <h5 class="card-title">{{ service.title }}</h5>
+                        <p class="card-text text-muted text-truncate">{{ service.description }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-primary fw-bold fs-5">${{ service.price }}</span>
+                            <a href="{% url 'service_detail' service.id %}" class="btn btn-outline-primary btn-sm">View
+                                Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No active services at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'service_list' %}" class="btn btn-outline-primary btn-lg">View All Services</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

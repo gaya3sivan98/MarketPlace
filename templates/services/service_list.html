@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Find Services - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">Find the Best Services</h2>
+            <form class="d-flex justify-content-center" method="get">
+                <div class="input-group w-50">
+                    <select class="form-select" name="category" style="max-width: 150px;">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.slug }}" {% if selected_category == cat.slug %}selected{% endif %}>{{cat.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <input type="text" class="form-control" placeholder="Search services..." name="q"
+                        value="{{ request.GET.q }}">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for service in services %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                {% if service.image %}
+                <img src="{{ service.image.url }}" class="card-img-top" alt="{{ service.title }}"
+                    style="height: 200px; object-fit: cover;">
+                {% else %}
+                <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Service Image">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-secondary">{{ service.category.name }}</span>
+                        <small class="text-muted"><i class="bi bi-star-fill text-warning"></i> 4.5 (20)</small>
+                    </div>
+                    <h5 class="card-title">{{ service.title }}</h5>
+                    <p class="card-text text-truncate">{{ service.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h5 class="text-primary mb-0">${{ service.price }}</h5>
+                        <a href="{% url 'service_detail' service.pk %}" class="btn btn-outline-primary btn-sm">View
+                            Details</a>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">By {% firstof service.provider.get_full_name service.provider.username %}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">No services found matching your criteria.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.get_full_name|default:profile_user.username }} - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Profile Sidebar -->
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-body text-center">
+                    {% if profile_user.profile.avatar %}
+                    <img src="{{ profile_user.profile.avatar.url }}" class="rounded-circle mb-3"
+                        style="width: 120px; height: 120px; object-fit: cover;" alt="Profile Picture">
+                    {% else %}
+                    <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto mb-3"
+                        style="width: 120px; height: 120px;">
+                        <span class="text-white display-4">{{ profile_user.username|first|upper }}</span>
+                    </div>
+                    {% endif %}
+                    <h4 class="mb-1">{{ profile_user.get_full_name|default:profile_user.username }}</h4>
+                    <p class="text-muted mb-2">
+                        {% if profile_user.is_provider %}
+                        <span class="badge bg-success"><i class="bi bi-patch-check-fill"></i> Service Provider</span>
+                        {% else %}
+                        <span class="badge bg-info">Customer</span>
+                        {% endif %}
+                    </p>
+                    {% if profile_user.profile.location %}
+                    <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> {{ profile_user.profile.location }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if profile_user.is_provider %}
+            <!-- Provider Stats -->
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase text-muted small mb-3">Provider Stats</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Rating</span>
+                        <span class="fw-bold">
+                            {% if avg_rating %}
+                            <span class="text-warning">
+                                {% for i in "12345" %}
+                                {% if forloop.counter <= avg_rating %}<i class="bi bi-star-fill"></i>{% else %}<i
+                                        class="bi bi-star"></i>{% endif %}
+                                    {% endfor %}
+                            </span>
+                            <small class="text-muted">({{ total_reviews }})</small>
+                            {% else %}
+                            <span class="text-muted">No reviews yet</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Completed Jobs</span>
+                        <span class="fw-bold">{{ completed_jobs }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Services Offered</span>
+                        <span class="fw-bold">{{ services|length }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if user.is_authenticated and user != profile_user %}
+            <div class="d-grid">
+                <a href="{% url 'chat_room' profile_user.id %}" class="btn btn-outline-primary">
+                    <i class="bi bi-chat-dots"></i> Send Message
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-8">
+            {% if profile_user.profile.bio %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">About</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ profile_user.profile.bio|linebreaks }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if profile_user.is_provider and services %}
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Services Offered</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for service in services %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border">
+                                {% if service.image %}
+                                <img src="{{ service.image.url }}" class="card-img-top"
+                                    style="height: 150px; object-fit: cover;" alt="{{ service.title }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ service.title }}</h6>
+                                    <p class="card-text small text-muted">{{ service.description|truncatewords:15 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-primary">${{ service.price }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if not profile_user.profile.bio and not services %}
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-person-circle display-1 text-muted"></i>
+                    <p class="text-muted mt-3">This user hasn't added any details yet.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

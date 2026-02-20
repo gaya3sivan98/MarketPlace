@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0">Checkout</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="mb-3">Booking Summary</h4>
+                    <p><strong>Service:</strong> {{ booking.service.title }}</p>
+                    <p><strong>Provider:</strong> {{ booking.service.provider.get_full_name|default:booking.service.provider.username }}</p>
+                    <p><strong>Date:</strong> {{ booking.date }} at {{ booking.time }}</p>
+                    <hr>
+                    <h3 class="text-center mb-4">Total Amount: ${{ booking.service.price }}</h3>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> This is a mock payment page. No actual money will be deducted.
+                    </div>
+
+                    <form method="post" action="{% url 'payment_success' booking.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Card Holder Name</label>
+                            <input type="text" class="form-control" value="Test User" readonly>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Card Number</label>
+                                <input type="text" class="form-control" value="**** **** **** 4242" readonly>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">CVC</label>
+                                <input type="text" class="form-control" value="123" readonly>
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Pay Now</button>
+                            <a href="{% url 'customer_bookings' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

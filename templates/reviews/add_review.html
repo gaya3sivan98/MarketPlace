@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Write a Review - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Write a Review</h3>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">For: {{ booking.service.title }}</h5>
+                    <p class="text-muted">Provider: {{ booking.service.provider.get_full_name|default:booking.service.provider.username }}</p>
+                    <hr>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_rating" class="form-label">Rating (1-5)</label>
+                            {{ form.rating }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_comment" class="form-label">Comment</label>
+                            {{ form.comment }}
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Submit Review</button>
+                            <a href="{% url 'customer_bookings' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

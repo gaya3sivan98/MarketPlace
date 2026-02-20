@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Account - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">My Dashboard</h2>                
+        </div>
+        <div>
+            <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-person-gear"></i> Edit Profile
+            </a>
+            <a href="{% url 'inbox' %}" class="btn btn-outline-primary btn-sm ms-2">
+                <i class="bi bi-chat-dots"></i> Inbox
+            </a>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="buying-tab" data-bs-toggle="tab" data-bs-target="#buying" type="button"
+                role="tab">
+                <i class="bi bi-bag"></i> My Purchases (Buying)
+            </button>
+        </li>
+        {% if user.is_provider %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="selling-tab" data-bs-toggle="tab" data-bs-target="#selling" type="button"
+                role="tab">
+                <i class="bi bi-shop"></i> My Services (Selling)
+            </button>
+        </li>
+        {% endif %}
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="dashboardTabsContent">
+        <!-- Buying Tab -->
+        <div class="tab-pane fade show active" id="buying" role="tabpanel">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Active Bookings</h5>
+                            <p class="card-text display-4">{{ active_bookings }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Completed Jobs</h5>
+                            <p class="card-text display-4">{{ completed_bookings }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Spend</h5>
+                            <p class="card-text display-4">${{ total_spend }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <a href="{% url 'service_list' %}" class="btn btn-success btn-lg">
+                    <i class="bi bi-search"></i> Book a New Service
+                </a>
+            </div>
+
+            <h3 class="mt-4 mb-3">Recent Bookings</h3>
+            {% if my_recent_bookings %}
+            <div class="table-responsive">
+                <table class="table table-hover shadow-sm border">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Service</th>
+                            <th>Provider</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in my_recent_bookings %}
+                        <tr>
+                            <td>{{ booking.service.title }}</td>
+                            <td>{{ booking.service.provider.get_full_name|default:booking.service.provider.username }}
+                            </td>
+                            <td>{{ booking.date }}</td>
+                            <td><span class="badge bg-secondary">{{ booking.status|title }}</span></td>
+                            <td><a href="{% url 'customer_bookings' %}"
+                                    class="btn btn-sm btn-outline-primary">Details</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-light border">You haven't booked any services yet.</div>
+            {% endif %}
+        </div>
+
+        {% if user.is_provider %}
+        <!-- Selling Tab -->
+        <div class="tab-pane fade" id="selling" role="tabpanel">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Earnings</h5>
+                            <p class="card-text display-4">${{ earnings }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Active Jobs</h5>
+                            <p class="card-text display-4">{{ active_jobs }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Completed Jobs</h5>
+                            <p class="card-text display-4">{{ completed_jobs }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <a href="{% url 'create_service' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-lg"></i> Add New Service
+                </a>
+                <a href="{% url 'provider_bookings' %}" class="btn btn-outline-info btn-lg ms-2">
+                    <i class="bi bi-calendar-check"></i> Manage Incoming Bookings
+                </a>
+            </div>
+
+            <h3 class="mt-4 mb-3">My Services</h3>
+            {% if provider_services %}
+            <div class="table-responsive">
+                <table class="table table-hover shadow-sm border">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for service in provider_services %}
+                        <tr>
+                            <td>{{ service.title }}</td>
+                            <td>{{ service.category.name }}</td>
+                            <td>${{ service.price }}</td>
+                            <td>
+                                {% if service.is_active %}
+                                <span class="badge bg-success">Active</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'edit_service' service.pk %}" class="btn btn-sm btn-outline-warning"><i
+                                        class="bi bi-pencil"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">You haven't listed any services yet.</div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

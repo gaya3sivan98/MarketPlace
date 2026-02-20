@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ service.title }} - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                {% if service.image %}
+                <img src="{{ service.image.url }}" class="card-img-top" alt="{{ service.title }}"
+                    style="max-height: 400px; width:100%; object-fit: cover;">
+                {% else %}
+                <img src="https://via.placeholder.com/800x400" class="card-img-top" alt="Service Image">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title">{{ service.title }}</h2>
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge bg-primary me-2">{{ service.category.name }}</span>
+                        <span class="text-muted"><i class="bi bi-geo-alt"></i>
+                            {{service.provider.profile.location|default:"Location not set" }}</span>
+                    </div>
+                    <hr>
+                    <h4>Description</h4>
+                    <p class="card-text">{{ service.description|linebreaks }}</p>
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h4 class="mb-0">Reviews</h4>
+                </div>
+                <div class="card-body">
+                    {% for booking in service.bookings.all %}
+                    {% if booking.review %}
+                    <div class="mb-3 border-bottom pb-3">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong>{{ booking.customer.get_full_name|default:booking.customer.username }}</strong>
+                            </div>
+                            <span class="text-warning">
+                                {% for i in "12345" %}
+                                {% if forloop.counter <= booking.review.rating %} <i class="bi bi-star-fill"></i>
+                                    {% else %}
+                                    <i class="bi bi-star"></i>
+                                    {% endif %}
+                                    {% endfor %}
+                            </span>
+                        </div>
+                        <p class="mb-1">{{ booking.review.comment }}</p>
+                        <small class="text-muted">{{ booking.review.created_at|date:"M d, Y" }}</small>
+                    </div>
+                    {% endif %}
+                    {% empty %}
+                    <p class="text-muted">No reviews yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h3 class="text-primary text-center mb-3">${{ service.price }}</h3>
+                    <div class="d-grid">
+                        <a href="{% url 'book_service' service.id %}" class="btn btn-success btn-lg">Book Now</a>
+                        {% if user != service.provider %}
+                        <a href="{% url 'chat_room' service.provider.id %}"
+                            class="btn btn-outline-secondary mt-2">Contact Provider</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">About the Provider</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if service.provider.profile.avatar %}
+                    <img src="{{ service.provider.profile.avatar.url }}" class="rounded-circle mb-3"
+                        style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                    <img src="https://via.placeholder.com/100" class="rounded-circle mb-3"
+                        style="width: 100px; height: 100px;">
+                    {% endif %}
+                    <p class="text-muted small mb-2">{{ service.provider.profile.bio|truncatewords:20 }}</p>
+                    <a href="{% url 'public_profile' service.provider.id %}" class="btn btn-sm btn-outline-dark">View
+                        Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

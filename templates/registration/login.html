@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login - ServiceMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-transparent border-0 pt-4">
+                    <h3 class="card-title text-center mb-0 fw-bold">Welcome Back</h3>
+                    <p class="text-center text-muted small mt-2">Login to manage your services</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label fw-bold">Username</label>
+                            <input type="text" name="username" class="form-control rounded-3" id="id_username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label fw-bold">Password</label>
+                            <input type="password" name="password" class="form-control rounded-3" id="id_password"
+                                required>
+                        </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-3">Sign In</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'password_reset' %}" class="text-decoration-none small text-muted">Forgot
+                                Password?</a>
+                        </div>
+                    </form>
+                    <hr class="my-4">
+                    <div class="text-center">
+                        <p class="mb-0">Don't have an account? <a href="{% url 'register' %}"
+                                class="fw-bold text-primary text-decoration-none">Register here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
