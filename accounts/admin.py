@@ -2,7 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User, Profile
 
-class ProfileInline(admin.StackedInline):
+
+#To show profile inside the User page
+class ProfileInline(admin.StackedInline):   
     model = Profile
     can_delete = False
     verbose_name_plural = 'Profile'
