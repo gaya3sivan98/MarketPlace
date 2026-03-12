@@ -14,7 +14,6 @@ def register_customer(request):
             user = form.save(commit=False)
             user.role = 'customer'
             user.save()
-            Profile.objects.create(user=user)
             login(request, user)
             return redirect('home')
     else:
